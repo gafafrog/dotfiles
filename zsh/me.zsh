@@ -1,5 +1,3 @@
-# me.zsh — personal shell preferences
-
 export AWS_PAGER=''
 
 export PATH=/usr/local/opt/ruby/bin:$PATH
