@@ -17,6 +17,19 @@ ln -s ~/repos/gafafrog/dotfiles/emacs/init.el ~/.emacs.d/init.el
 
 `init.el` loads `me.el` from the same directory automatically.
 
+### starship
+
+```bash
+ln -s ~/repos/gafafrog/dotfiles/starship/starship.toml ~/.config/starship.toml
+```
+
+### wezterm
+
+```bash
+mkdir -p ~/.config/wezterm
+ln -s ~/repos/gafafrog/dotfiles/wezterm/wezterm.lua ~/.config/wezterm/wezterm.lua
+```
+
 ### zsh
 
 ```bash
