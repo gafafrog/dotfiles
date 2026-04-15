@@ -1,2 +1,2 @@
-source ~/dotfiles/zsh/me.zsh
-source ~/dotfiles/zsh/home.zsh
+source "${${(%):-%x}:A:h}/me.zsh"
+source "${${(%):-%x}:A:h}/home.zsh"
