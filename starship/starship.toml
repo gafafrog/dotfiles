@@ -1,0 +1,9 @@
+[username]
+disabled = true
+
+[hostname]
+disabled = true
+
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
