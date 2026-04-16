@@ -24,7 +24,13 @@
 (setq inhibit-splash-screen t)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
-(global-set-key (kbd "s-r") 'revert-buffer)
+(global-set-key (kbd "s-r") 'revert-buffer)  ; GUI Emacs
+;; Terminal Emacs: WezTerm Cmd+r sends \e[250~; decode to f19, then bind f19
+(defun my-setup-terminal-keys ()
+  (define-key input-decode-map "\e[250~" [f19]))
+(add-hook 'tty-setup-hook #'my-setup-terminal-keys)
+(when (not (display-graphic-p)) (my-setup-terminal-keys))
+(global-set-key [f19] 'revert-buffer)
 (set-face-attribute 'default nil :height 120)
 (global-display-line-numbers-mode t)
 (column-number-mode t)

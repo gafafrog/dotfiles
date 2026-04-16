@@ -34,7 +34,7 @@ config.keys = {
   { key = 'DownArrow', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
 
   -- Pass Cmd+r through to terminal apps (e.g. Emacs revert-buffer)
-  { key = 'r', mods = 'SUPER', action = wezterm.action.DisableDefaultAssignment },
+  { key = 'r', mods = 'SUPER', action = wezterm.action.SendString '\x1b[250~' },
 
   -- Split panes (tmux-style)
   { key = '|', mods = 'LEADER|SHIFT', action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' } },
