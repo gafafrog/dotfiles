@@ -87,6 +87,12 @@
   (global-set-key (kbd "M-a") 'magit-blame-addition)
   (define-key magit-hunk-section-map (kbd "RET") 'magit-diff-visit-file-other-window))
 
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (when (and (magit-toplevel)
+                       (not (member "-Q" command-line-args)))
+              (magit-status))))
+
 ;;; org mode - override org-mode default to favor general window switching
 (use-package org
   :config
@@ -126,6 +132,9 @@
   :config
   (add-to-list 'auto-mode-alist
                '("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
+
+;;; Lua
+(use-package lua-mode)
 
 ;;; TypeScript
 (use-package prettier-js
