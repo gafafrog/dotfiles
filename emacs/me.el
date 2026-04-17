@@ -24,7 +24,7 @@
 (setq inhibit-splash-screen t)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
-(global-set-key (kbd "s-r") 'revert-buffer)  ; GUI Emacs
+(global-set-key (kbd "s-r") 'revert-buffer) ; GUI Emacs
 ;; Terminal Emacs: WezTerm Cmd+r sends \e[250~; decode to f19, then bind f19
 (defun my-setup-terminal-keys ()
   (define-key input-decode-map "\e[250~" [f19]))
@@ -61,8 +61,10 @@
 (global-auto-revert-mode 1)
 
 ;;; window navigation
-(split-window-right)                ; split vertically the window at startup
-(setq split-height-threshold 500)   ; and prevent commands from splitting further
+(when (>= (frame-width) 160)        ; split vertically only if wide enough
+  (split-window-right))
+(setq split-width-threshold 160)    ; prevent auto horizontal splits when narrow
+(setq split-height-threshold 500)   ; prevent commands from splitting vertically
 (windmove-default-keybindings)      ; move to other window by S-right etc.
 (winner-mode)
 (global-set-key (kbd "C-c p") 'winner-undo)
@@ -91,7 +93,12 @@
   :config
   (global-set-key (kbd "C-x m") 'magit-status)
   (global-set-key (kbd "M-a") 'magit-blame-addition)
-  (define-key magit-hunk-section-map (kbd "RET") 'magit-diff-visit-file-other-window))
+  (define-key magit-hunk-section-map (kbd "RET") 'magit-diff-visit-file-other-window)
+  (setq magit-display-buffer-function
+        (lambda (buffer)
+          (if (>= (frame-width) 160)
+              (magit-display-buffer-traditional buffer)
+            (display-buffer buffer '(display-buffer-same-window))))))
 
 (add-hook 'emacs-startup-hook
           (lambda ()
