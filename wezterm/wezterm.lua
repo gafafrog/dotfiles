@@ -70,12 +70,38 @@ config.keys = {
   }},
   { key = 'n', mods = 'LEADER', action = wezterm.action.ActivateTabRelative(1) },
   { key = 'p', mods = 'LEADER', action = wezterm.action.ActivateTabRelative(-1) },
+  { key = 'N', mods = 'LEADER|SHIFT', action = wezterm.action.MoveTabRelative(1) },
+  { key = 'P', mods = 'LEADER|SHIFT', action = wezterm.action.MoveTabRelative(-1) },
+  { key = 'm', mods = 'LEADER', action = wezterm.action.ActivateKeyTable { name = 'move_tab', one_shot = true } },
+  { key = '1', mods = 'LEADER', action = wezterm.action.ActivateTab(0) },
+  { key = '2', mods = 'LEADER', action = wezterm.action.ActivateTab(1) },
+  { key = '3', mods = 'LEADER', action = wezterm.action.ActivateTab(2) },
+  { key = '4', mods = 'LEADER', action = wezterm.action.ActivateTab(3) },
+  { key = '5', mods = 'LEADER', action = wezterm.action.ActivateTab(4) },
+  { key = '6', mods = 'LEADER', action = wezterm.action.ActivateTab(5) },
+  { key = '7', mods = 'LEADER', action = wezterm.action.ActivateTab(6) },
+  { key = '8', mods = 'LEADER', action = wezterm.action.ActivateTab(7) },
+  { key = '9', mods = 'LEADER', action = wezterm.action.ActivateTab(8) },
 
   -- Swap panes
   { key = '{', mods = 'LEADER|SHIFT', action = wezterm.action.PaneSelect { mode = 'SwapWithActive' } },
 
   -- Pass Ctrl+s through to terminal (e.g. save in vim) by pressing Ctrl+s twice
   { key = 's', mods = 'LEADER|CTRL', action = wezterm.action.SendKey { key = 's', mods = 'CTRL' } },
+}
+
+config.key_tables = {
+  move_tab = {
+    { key = '1', action = wezterm.action.MoveTab(0) },
+    { key = '2', action = wezterm.action.MoveTab(1) },
+    { key = '3', action = wezterm.action.MoveTab(2) },
+    { key = '4', action = wezterm.action.MoveTab(3) },
+    { key = '5', action = wezterm.action.MoveTab(4) },
+    { key = '6', action = wezterm.action.MoveTab(5) },
+    { key = '7', action = wezterm.action.MoveTab(6) },
+    { key = '8', action = wezterm.action.MoveTab(7) },
+    { key = '9', action = wezterm.action.MoveTab(8) },
+  },
 }
 
 return config
