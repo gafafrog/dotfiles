@@ -3,7 +3,7 @@ local config = wezterm.config_builder()
 
 config.font = wezterm.font_with_fallback({
   { family = 'JetBrainsMono Nerd Font', weight = 'Medium' },
-  'Hiragino Maru Gothic ProN',
+  'Hiragino Sans',
 })
 config.font_size = 13.0
 config.scrollback_lines = 10000
@@ -12,6 +12,7 @@ config.window_close_confirmation = 'NeverPrompt'
 config.window_background_opacity = 0.8
 config.send_composed_key_when_left_alt_is_pressed = false
 config.send_composed_key_when_right_alt_is_pressed = false
+config.macos_forward_to_ime_modifier_mask = 'CTRL|SHIFT'
 
 config.colors = {
   background = '#1a1a2e',
