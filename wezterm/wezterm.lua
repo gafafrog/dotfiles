@@ -3,7 +3,7 @@ local config = wezterm.config_builder()
 
 config.font = wezterm.font_with_fallback({
   { family = 'JetBrainsMono Nerd Font', weight = 'Medium' },
-  'Hiragino Sans',
+  { family = 'Hiragino Sans', weight = 'Medium' },
 })
 config.font_size = 13.0
 config.scrollback_lines = 10000
@@ -39,6 +39,9 @@ config.keys = {
 
   -- Pass Cmd+r through to terminal apps (e.g. Emacs revert-buffer)
   { key = 'r', mods = 'SUPER', action = wezterm.action.SendString '\x1b[250~' },
+
+  -- Pass Ctrl+/ through to terminal apps (e.g. Emacs undo), bypassing IME forwarding
+  { key = '/', mods = 'CTRL', action = wezterm.action.SendString '\x1f' },
 
   -- Split panes (tmux-style)
   { key = '|', mods = 'LEADER|SHIFT', action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' } },

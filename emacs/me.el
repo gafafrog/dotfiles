@@ -31,6 +31,7 @@
 (add-hook 'tty-setup-hook #'my-setup-terminal-keys)
 (when (not (display-graphic-p)) (my-setup-terminal-keys))
 (global-set-key [f19] 'revert-buffer)
+(set-display-table-slot standard-display-table 'wrap ?↩)
 (set-face-attribute 'default nil :height 120)
 (global-display-line-numbers-mode t)
 (column-number-mode t)
@@ -93,7 +94,8 @@
   :config
   (global-set-key (kbd "C-x m") 'magit-status)
   (global-set-key (kbd "M-a") 'magit-blame-addition)
-  (define-key magit-hunk-section-map (kbd "RET") 'magit-diff-visit-file-other-window)
+  (define-key magit-file-section-map (kbd "RET") 'magit-diff-visit-worktree-file)
+  (define-key magit-hunk-section-map (kbd "RET") 'magit-diff-visit-worktree-file)
   (setq magit-display-buffer-function
         (lambda (buffer)
           (if (>= (frame-width) 160)
