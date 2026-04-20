@@ -95,7 +95,7 @@
   (global-set-key (kbd "C-x m") 'magit-status)
   (global-set-key (kbd "M-a") 'magit-blame-addition)
   (define-key magit-file-section-map (kbd "RET") 'magit-diff-visit-worktree-file)
-  (define-key magit-hunk-section-map (kbd "RET") 'magit-diff-visit-worktree-file)
+  (define-key magit-hunk-section-map (kbd "RET") 'magit-diff-visit-file-other-window)
   (setq magit-commit-show-diff nil)
   (setq magit-display-buffer-function
         (lambda (buffer)
@@ -229,3 +229,9 @@
     "Switch to my selected light theme."
     (interactive)
     (load-theme 'sanityinc-tomorrow-day t)))
+
+;; Enable mouse in terminal (click to position cursor, select, etc.)
+(xterm-mouse-mode 1)
+;; Bind scroll wheel to line-based scrolling
+(global-set-key (kbd "<mouse-4>") (lambda () (interactive) (scroll-down 3)))
+(global-set-key (kbd "<mouse-5>") (lambda () (interactive) (scroll-up 3)))
