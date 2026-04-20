@@ -96,6 +96,7 @@
   (global-set-key (kbd "M-a") 'magit-blame-addition)
   (define-key magit-file-section-map (kbd "RET") 'magit-diff-visit-worktree-file)
   (define-key magit-hunk-section-map (kbd "RET") 'magit-diff-visit-worktree-file)
+  (setq magit-commit-show-diff nil)
   (setq magit-display-buffer-function
         (lambda (buffer)
           (if (>= (frame-width) 160)
