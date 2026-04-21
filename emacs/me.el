@@ -195,9 +195,24 @@
 ;;; treemacs
 ;; Don't auto-launch at startup; it blocks TRAMP's SSH process handling.
 ;; Use C-c t to open on demand.
+(defun my-treemacs-open ()
+  "Open treemacs for the current directory or repo root.
+Finds the matching workspace and navigates to the file at point."
+  (interactive)
+  (let* ((root (expand-file-name (or (vc-root-dir) (magit-toplevel) default-directory)))
+         (target (or (and (derived-mode-p 'magit-mode)
+                          (magit-file-at-point t)
+                          (expand-file-name (magit-file-at-point t) root))
+                     buffer-file-name
+                     root))
+         (ws (treemacs-find-workspace-by-path root)))
+    (when (and ws (not (eq ws (treemacs-current-workspace))))
+      (treemacs-do-switch-workspace ws))
+    (treemacs)
+    (ignore-errors (treemacs-goto-node target))))
 (use-package treemacs
   :config
-  (global-set-key (kbd "C-c t") 'treemacs)
+  (global-set-key (kbd "C-c t") 'my-treemacs-open)
   (global-set-key (kbd "C-c f") 'treemacs-find-file)
   (global-set-key (kbd "M-0") #'treemacs-select-window)
   (treemacs-follow-mode -1)
