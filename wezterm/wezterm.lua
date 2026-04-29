@@ -89,6 +89,41 @@ config.keys = {
   -- Swap panes
   { key = '{', mods = 'LEADER|SHIFT', action = wezterm.action.PaneSelect { mode = 'SwapWithActive' } },
 
+  -- Equalize pane widths in the current tab (horizontal splits)
+  { key = '=', mods = 'LEADER', action = wezterm.action_callback(function(window, pane)
+    local tab = window:active_tab()
+    local panes = tab:panes_with_info()
+    if #panes < 2 then return end
+    local tab_width = 0
+    for _, p in ipairs(panes) do
+      if p.top == 0 then tab_width = tab_width + p.width + 1 end
+    end
+    tab_width = tab_width - 1
+    -- Only equalize panes that share the top row (same horizontal row)
+    local row_panes = {}
+    for _, p in ipairs(panes) do
+      if p.top == 0 and p.height == panes[1].height then
+        table.insert(row_panes, p)
+      end
+    end
+    if #row_panes < 2 then return end
+    local target = math.floor(tab_width / #row_panes)
+    -- Sort left-to-right
+    table.sort(row_panes, function(a, b) return a.left < b.left end)
+    for i = 1, #row_panes - 1 do
+      local p = row_panes[i]
+      local diff = target - p.width
+      if diff ~= 0 then
+        p.pane:activate()
+        window:perform_action(
+          wezterm.action.AdjustPaneSize { diff > 0 and 'Right' or 'Left', math.abs(diff) },
+          p.pane
+        )
+      end
+    end
+    pane:activate()
+  end) },
+
   -- Pass Ctrl+s through to terminal (e.g. save in vim) by pressing Ctrl+s twice
   { key = 's', mods = 'LEADER|CTRL', action = wezterm.action.SendKey { key = 's', mods = 'CTRL' } },
 }
