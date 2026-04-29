@@ -105,9 +105,10 @@
 
 (add-hook 'emacs-startup-hook
           (lambda ()
-            (when (and (magit-toplevel)
-                       (not (member "-Q" command-line-args)))
-              (magit-status))))
+            (unless (member "-Q" command-line-args)
+              (if (magit-toplevel)
+                  (magit-status)
+                (dired default-directory)))))
 
 ;;; org mode - override org-mode default to favor general window switching
 (use-package org
@@ -199,12 +200,13 @@
   "Open treemacs for the current directory or repo root.
 Finds the matching workspace and navigates to the file at point."
   (interactive)
-  (let* ((root (expand-file-name (or (vc-root-dir) (magit-toplevel) default-directory)))
-         (target (or (and (derived-mode-p 'magit-mode)
-                          (magit-file-at-point t)
-                          (expand-file-name (magit-file-at-point t) root))
-                     buffer-file-name
-                     root))
+  (let* ((root (file-truename (or (vc-root-dir) (magit-toplevel) default-directory)))
+         (target (file-truename
+                  (or (and (derived-mode-p 'magit-mode)
+                           (magit-file-at-point t)
+                           (expand-file-name (magit-file-at-point t) root))
+                      buffer-file-name
+                      root)))
          (ws (treemacs-find-workspace-by-path root)))
     (when (and ws (not (eq ws (treemacs-current-workspace))))
       (treemacs-do-switch-workspace ws))
