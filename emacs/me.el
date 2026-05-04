@@ -153,6 +153,10 @@
 ;;; Lua
 (use-package lua-mode)
 
+;;; Dockerfile
+(use-package dockerfile-mode
+  :mode ("Dockerfile\\'" . dockerfile-mode))
+
 ;;; TypeScript
 (use-package prettier-js
   :config
