@@ -13,6 +13,12 @@
   :config
   (exec-path-from-shell-initialize))
 
+;; Bridge emacs kill-ring to system clipboard via OSC 52 in terminal frames.
+;; Requires terminal/multiplexer that forwards OSC 52 (WezTerm + tmux
+;; `set-clipboard on`).
+(use-package clipetty
+  :hook (after-init . global-clipetty-mode))
+
 ;; open buffer in the same window
 (global-set-key "\C-x\C-b" 'buffer-menu)
 ;; backspace instead of help
@@ -95,7 +101,7 @@
   (global-set-key (kbd "C-x m") 'magit-status)
   (global-set-key (kbd "M-a") 'magit-blame-addition)
   (define-key magit-file-section-map (kbd "RET") 'magit-diff-visit-worktree-file)
-  (define-key magit-hunk-section-map (kbd "RET") 'magit-diff-visit-file-other-window)
+  (define-key magit-hunk-section-map (kbd "RET") 'magit-diff-visit-worktree-file-other-window)
   (setq magit-commit-show-diff nil)
   (setq magit-display-buffer-function
         (lambda (buffer)
