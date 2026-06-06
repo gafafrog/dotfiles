@@ -3,6 +3,8 @@ export AWS_PAGER=''
 export PATH=/usr/local/opt/ruby/bin:$PATH
 export PATH=$PATH:$(go env GOPATH)/bin
 
+command -v mise > /dev/null && eval "$(mise activate zsh)"
+
 alias showcert='openssl x509 -text -noout -in'
 
 # ls aliases
