@@ -13,6 +13,12 @@
   :config
   (exec-path-from-shell-initialize))
 
+;; Bridge emacs kill-ring to system clipboard via OSC 52 in terminal frames.
+;; Requires terminal/multiplexer that forwards OSC 52 (WezTerm + tmux
+;; `set-clipboard on`).
+(use-package clipetty
+  :hook (after-init . global-clipetty-mode))
+
 ;; open buffer in the same window
 (global-set-key "\C-x\C-b" 'buffer-menu)
 ;; backspace instead of help
@@ -24,7 +30,14 @@
 (setq inhibit-splash-screen t)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
-(global-set-key (kbd "s-r") 'revert-buffer)
+(global-set-key (kbd "s-r") 'revert-buffer) ; GUI Emacs
+;; Terminal Emacs: WezTerm Cmd+r sends \e[250~; decode to f19, then bind f19
+(defun my-setup-terminal-keys ()
+  (define-key input-decode-map "\e[250~" [f19]))
+(add-hook 'tty-setup-hook #'my-setup-terminal-keys)
+(when (not (display-graphic-p)) (my-setup-terminal-keys))
+(global-set-key [f19] 'revert-buffer)
+(set-display-table-slot standard-display-table 'wrap ?↩)
 (set-face-attribute 'default nil :height 120)
 (global-display-line-numbers-mode t)
 (column-number-mode t)
@@ -55,8 +68,10 @@
 (global-auto-revert-mode 1)
 
 ;;; window navigation
-(split-window-right)                ; split vertically the window at startup
-(setq split-height-threshold 500)   ; and prevent commands from splitting further
+(when (>= (frame-width) 160)        ; split vertically only if wide enough
+  (split-window-right))
+(setq split-width-threshold 160)    ; prevent auto horizontal splits when narrow
+(setq split-height-threshold 500)   ; prevent commands from splitting vertically
 (windmove-default-keybindings)      ; move to other window by S-right etc.
 (winner-mode)
 (global-set-key (kbd "C-c p") 'winner-undo)
@@ -85,7 +100,21 @@
   :config
   (global-set-key (kbd "C-x m") 'magit-status)
   (global-set-key (kbd "M-a") 'magit-blame-addition)
-  (define-key magit-hunk-section-map (kbd "RET") 'magit-diff-visit-file-other-window))
+  (define-key magit-file-section-map (kbd "RET") 'magit-diff-visit-worktree-file)
+  (define-key magit-hunk-section-map (kbd "RET") 'magit-diff-visit-worktree-file-other-window)
+  (setq magit-commit-show-diff nil)
+  (setq magit-display-buffer-function
+        (lambda (buffer)
+          (if (>= (frame-width) 160)
+              (magit-display-buffer-traditional buffer)
+            (display-buffer buffer '(display-buffer-same-window))))))
+
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (unless (member "-Q" command-line-args)
+              (if (magit-toplevel)
+                  (magit-status)
+                (dired default-directory)))))
 
 ;;; org mode - override org-mode default to favor general window switching
 (use-package org
@@ -126,6 +155,13 @@
   :config
   (add-to-list 'auto-mode-alist
                '("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
+
+;;; Lua
+(use-package lua-mode)
+
+;;; Dockerfile
+(use-package dockerfile-mode
+  :mode ("Dockerfile\\'" . dockerfile-mode))
 
 ;;; TypeScript
 (use-package prettier-js
@@ -170,9 +206,25 @@
 ;;; treemacs
 ;; Don't auto-launch at startup; it blocks TRAMP's SSH process handling.
 ;; Use C-c t to open on demand.
+(defun my-treemacs-open ()
+  "Open treemacs for the current directory or repo root.
+Finds the matching workspace and navigates to the file at point."
+  (interactive)
+  (let* ((root (file-truename (or (vc-root-dir) (magit-toplevel) default-directory)))
+         (target (file-truename
+                  (or (and (derived-mode-p 'magit-mode)
+                           (magit-file-at-point t)
+                           (expand-file-name (magit-file-at-point t) root))
+                      buffer-file-name
+                      root)))
+         (ws (treemacs-find-workspace-by-path root)))
+    (when (and ws (not (eq ws (treemacs-current-workspace))))
+      (treemacs-do-switch-workspace ws))
+    (treemacs)
+    (ignore-errors (treemacs-goto-node target))))
 (use-package treemacs
   :config
-  (global-set-key (kbd "C-c t") 'treemacs)
+  (global-set-key (kbd "C-c t") 'my-treemacs-open)
   (global-set-key (kbd "C-c f") 'treemacs-find-file)
   (global-set-key (kbd "M-0") #'treemacs-select-window)
   (treemacs-follow-mode -1)
@@ -204,3 +256,9 @@
     "Switch to my selected light theme."
     (interactive)
     (load-theme 'sanityinc-tomorrow-day t)))
+
+;; Enable mouse in terminal (click to position cursor, select, etc.)
+(xterm-mouse-mode 1)
+;; Bind scroll wheel to line-based scrolling
+(global-set-key (kbd "<mouse-4>") (lambda () (interactive) (scroll-down 3)))
+(global-set-key (kbd "<mouse-5>") (lambda () (interactive) (scroll-up 3)))
