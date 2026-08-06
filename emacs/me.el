@@ -28,6 +28,9 @@
 ;; highlight current line
 (global-hl-line-mode 1)
 (setq inhibit-splash-screen t)
+;; scratch buffer as a plain-text notepad
+(setq initial-major-mode 'text-mode)
+(setq initial-scratch-message nil)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 (global-set-key (kbd "s-r") 'revert-buffer) ; GUI Emacs
